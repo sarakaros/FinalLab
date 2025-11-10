@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-md-6 offset-md-3">
-        <form action="/AddStaff" method="post">
+        <form asp-action="Add" method="post" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
@@ -44,10 +44,11 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="PhotoUrl" class="form-label">Photo URL:</label>
-                <input asp-for="PhotoUrl" class="form-control" data-testid="photo-url-input" />
-                <span asp-validation-for="PhotoUrl" class="text-danger"></span>
-                <small class="form-text text-muted">Leave blank for default avatar</small>
+                <label class="form-label">Photo:</label>
+                <input type="file" name="PhotoFile" class="form-control" data-testid="photo-file-input" />
+                <small class="form-text text-muted">
+                    If no file is uploaded, default avatar will be used.
+                </small>
             </div>
 
             <button type="submit" class="btn btn-success" data-testid="submit-button">Add Staff Member</button>

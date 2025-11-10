@@ -1,6 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Webapp.Models;
 using Webapp.Services;
+
 
 namespace Webapp.Controllers;
 
@@ -47,8 +49,8 @@ public class StaffController : Controller
 
     [Route("AddStaff")]
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult Add(Staff staff)
+    //[ValidateAntiForgeryToken]//
+    public IActionResult Add(Staff staff, IFormFile? PhotoFile)
     {
         bool isInputValid = ValidateStaffInput(staff);
         bool isFormatValid = ValidateStaffFormat(staff);
@@ -57,6 +59,27 @@ public class StaffController : Controller
         if (!isInputValid || !isFormatValid || !isUniquenessValid)
         {
             return View(staff);
+        }
+
+        // Handle photo upload
+        if (PhotoFile != null && PhotoFile.Length > 0)
+        {
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(PhotoFile.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                PhotoFile.CopyTo(stream);
+            }
+
+            // Lưu path để view dùng
+            staff.PhotoUrl = $"/images/{fileName}";
         }
 
         _staffService.AddNewStaff(staff);

@@ -1,12 +1,14 @@
 using Webapp.Services;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register the service layer as a singleton
-// The checker app will verify this service layer (intermediary between data and interface)
+// Register the service layer
 builder.Services.AddSingleton<IStaffService, StaffService>();
 
-builder.Services.AddControllersWithViews();
+// Enable Razor runtime compilation (for debugging + integration tests)
+builder.Services.AddControllersWithViews()
+    .AddRazorRuntimeCompilation();
 
 var app = builder.Build();
 
@@ -27,5 +29,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Staff}/{action=Index}/{id?}");
 
-
 app.Run();
+
+public partial class Program { }
